@@ -112,4 +112,6 @@ dependencies {
     // Firebase
     implementation "com.firebaseui:firebase-ui-auth:$firebaseUiAuthVersion"
     implementation "com.google.firebase:firebase-auth-ktx:$firebaseAuthKtxVersion"
+
+    implementation 'com.firebaseui:firebase-ui-auth:5.0.0'
 }

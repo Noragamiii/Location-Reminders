@@ -1,6 +1,7 @@
 package com.udacity.project4.locationreminders
 
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
@@ -14,6 +15,7 @@ class RemindersActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRemindersBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.d("RemindersActivity","RemindersActivity")
         super.onCreate(savedInstanceState)
         binding = ActivityRemindersBinding.inflate(layoutInflater)
         setContentView(binding.root)

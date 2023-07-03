@@ -1,6 +1,7 @@
 package com.udacity.project4
 
 import android.app.Application
+import android.util.Log
 import com.udacity.project4.locationreminders.data.ReminderDataSource
 import com.udacity.project4.locationreminders.data.local.LocalDB
 import com.udacity.project4.locationreminders.data.local.RemindersLocalRepository
@@ -14,6 +15,7 @@ import org.koin.dsl.module
 class MyApp : Application() {
 
 	override fun onCreate() {
+		Log.d("MyApp","MyApp")
 		super.onCreate()
 
 		/**
