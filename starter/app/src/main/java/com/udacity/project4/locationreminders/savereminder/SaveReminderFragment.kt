@@ -14,12 +14,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
+import androidx.navigation.findNavController
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
-import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.snackbar.Snackbar
 import com.udacity.project4.BuildConfig
 import com.udacity.project4.R
@@ -107,6 +106,13 @@ class SaveReminderFragment : BaseFragment() {
             }
             // save the reminder to the local db
             _viewModel.validateAndSaveReminder(reminderDataItem)
+
+            _viewModel.setIsSuccess.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+                if(it){
+                    view.findNavController().navigate(R.id.action_saveReminderFragment_to_reminderListFragment)
+                    _viewModel.setIsSuccess()
+                }
+            })
         }
     }
 
@@ -142,17 +148,10 @@ class SaveReminderFragment : BaseFragment() {
 
         geofencingClient.addGeofences(geofencingRequest, geofencePendingIntent)?.run {
             addOnSuccessListener {
-                // Geofence added.
-                Toast.makeText(context, R.string.add_geofence,
-                    Toast.LENGTH_SHORT)
-                    .show()
                 Log.e("Add Geofence", geofence.requestId)
             }
             addOnFailureListener {
                 // Failed to add geofence.
-                Toast.makeText(context, R.string.geofences_not_added,
-                    Toast.LENGTH_SHORT)
-                    .show()
                 if ((it.message != null)) {
                     Log.w(TAG, it.message!!)
                 }
@@ -208,7 +207,7 @@ class SaveReminderFragment : BaseFragment() {
                     // and check the result in onActivityResult().
                     startIntentSenderForResult(exception.resolution.intentSender, REQUEST_TURN_DEVICE_LOCATION_ON, null, 0, 0, 0, null)
                 } catch (sendEx: IntentSender.SendIntentException) {
-                    Log.d(TAG, "Error geting location settings resolution: " + sendEx.message)
+                    Log.d(TAG, "Error getting location settings resolution: " + sendEx.message)
                 }
             } else {
                 Snackbar.make(

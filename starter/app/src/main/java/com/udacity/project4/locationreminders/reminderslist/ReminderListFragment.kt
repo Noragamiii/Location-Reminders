@@ -69,7 +69,20 @@ class ReminderListFragment : BaseFragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.logout -> {
-                onLogout()
+                // Reference https://github.com/firebase/FirebaseUI-Android/blob/master/auth/README.md
+                AuthUI.getInstance()
+                    .signOut(requireContext())
+                    .addOnCompleteListener {
+                        if (it.isSuccessful) {
+                            val activity = requireActivity()
+                            startActivity(Intent(activity, AuthenticationActivity::class.java))
+                            activity.finish()
+                        } else {
+                            val view: View = requireView()
+                            val message: String = getString(R.string.logout_fail)
+                            Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show()
+                        }
+                    }
             }
         }
         return super.onOptionsItemSelected(item)
@@ -79,22 +92,5 @@ class ReminderListFragment : BaseFragment() {
         super.onCreateOptionsMenu(menu, inflater)
         // Display logout as menu item
         inflater.inflate(R.menu.main_menu, menu)
-    }
-
-    // Reference https://github.com/firebase/FirebaseUI-Android/blob/master/auth/README.md
-   private fun onLogout() {
-        AuthUI.getInstance()
-            .signOut(requireContext())
-            .addOnCompleteListener {
-                if (it.isSuccessful) {
-                    val activity = requireActivity()
-                    startActivity(Intent(activity, AuthenticationActivity::class.java))
-                    activity.finish()
-                } else {
-                    val view: View = requireView()
-                    val message: String = getString(R.string.logout_fail)
-                    Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show()
-                }
-            }
     }
 }

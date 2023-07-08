@@ -2,27 +2,43 @@ package com.udacity.project4.locationreminders.data
 
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 import com.udacity.project4.locationreminders.data.dto.Result
+import java.util.LinkedHashMap
 
 //Use FakeDataSource that acts as a test double to the LocalDataSource
+// Reference https://github.com/udacity/android-testing
 class FakeDataSource : ReminderDataSource {
 
-//    TODO: Create a fake data source to act as a double to the real data source
+    private var reminderData: LinkedHashMap<String, ReminderDTO> = LinkedHashMap()
+
+    private var shouldReturnError = false
+
+    fun setReturnError(value: Boolean) {
+        shouldReturnError = value
+    }
 
     override suspend fun getReminders(): Result<List<ReminderDTO>> {
-        TODO("Return the reminders")
+        if (shouldReturnError) {
+            Result.Error("Test exception")
+        }
+        return Result.Success(reminderData.values.toList())
     }
 
     override suspend fun saveReminder(reminder: ReminderDTO) {
-        TODO("save the reminder")
+        reminderData[reminder.id] = reminder
     }
 
     override suspend fun getReminder(id: String): Result<ReminderDTO> {
-        TODO("return the reminder with the id")
+        if (shouldReturnError) {
+            return Result.Error("Test exception")
+        }
+        reminderData[id]?.let {
+            return Result.Success(it)
+        }
+        return Result.Error("Could not find data")
     }
 
     override suspend fun deleteAllReminders() {
-        TODO("delete all the reminders")
+        reminderData.clear()
     }
-
 
 }
