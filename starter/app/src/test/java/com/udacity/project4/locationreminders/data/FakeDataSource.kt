@@ -18,7 +18,7 @@ class FakeDataSource : ReminderDataSource {
 
     override suspend fun getReminders(): Result<List<ReminderDTO>> {
         if (shouldReturnError) {
-            Result.Error("Test exception")
+            return Result.Error("Test exception")
         }
         return Result.Success(reminderData.values.toList())
     }
