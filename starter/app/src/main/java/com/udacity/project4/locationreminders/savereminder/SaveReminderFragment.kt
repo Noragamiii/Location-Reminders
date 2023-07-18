@@ -14,6 +14,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.findNavController
@@ -51,7 +52,7 @@ class SaveReminderFragment : BaseFragment() {
         PendingIntent.getBroadcast(requireContext(),
             0,
             intent,
-            PendingIntent.FLAG_UPDATE_CURRENT)
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
     }
 
     override fun onCreateView(
@@ -68,11 +69,6 @@ class SaveReminderFragment : BaseFragment() {
         return binding.root
     }
 
-    override fun onStart() {
-        super.onStart()
-        checkPermissionsAndStartGeofencing()
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = this
@@ -84,6 +80,10 @@ class SaveReminderFragment : BaseFragment() {
         }
 
         binding.saveReminder.setOnClickListener {
+
+            // Check permission
+            checkPermissionsAndStartGeofencing()
+
             val title = _viewModel.reminderTitle.value
             val description = _viewModel.reminderDescription.value
             val location = _viewModel.reminderSelectedLocationStr.value
@@ -98,11 +98,13 @@ class SaveReminderFragment : BaseFragment() {
                 longitude
             )
             // add a geofencing request
-            if (title != null) {
-                if (title.isNotEmpty() && checkIsSuccess) {
+            if (title != null && location != null) {
+                if (title.isNotEmpty() && checkIsSuccess && location.isNotEmpty()) {
                     tempReminderDataItem = reminderDataItem
-                    addGeofenceForClue()
                 }
+            }
+            else {
+                Toast.makeText(context, "Please fill title and select location", Toast.LENGTH_LONG).show()
             }
             // save the reminder to the local db
             _viewModel.validateAndSaveReminder(reminderDataItem)
@@ -220,6 +222,7 @@ class SaveReminderFragment : BaseFragment() {
         }
         locationSettingsResponseTask.addOnCompleteListener {
             if ( it.isSuccessful ) {
+                addGeofenceForClue()
                 checkIsSuccess = true
             }
         }

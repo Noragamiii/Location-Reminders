@@ -146,10 +146,9 @@ class RemindersListViewModelTest {
         val loadedItems = reminderListViewModel.remindersList.getOrAwaitValue()
 
         assertThat( (loadedItems.size), `is`(3))
-        assertThat(reminderListViewModel.showNoData.getOrAwaitValue(), `is`(false))
-        assertThat( reminderListViewModel.remindersList.getOrAwaitValue(), (not(emptyList())))
         assertThat(loadedItems[0].title, `is`(reminderDataItem1.title))
         assertThat(loadedItems[1].title, `is`(reminderDataItem2.title))
         assertThat(loadedItems[2].title, `is`(reminderDataItem3.title))
+        assertThat(reminderListViewModel.showNoData.getOrAwaitValue(), `is`(false))
     }
 }
